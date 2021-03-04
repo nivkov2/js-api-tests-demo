@@ -1,5 +1,6 @@
 import { strict as assert } from 'assert'
 import { PetController } from '../api/controlers/pet.controller';
+import {definitions} from '../.temp/types'
 
 let pet = new PetController();
 
@@ -21,20 +22,20 @@ describe('User can', () => {
 
         body = await pet.getPetByStatus(['available', 'pending'])
         assert(body.length > 0, `Expected pet count to be greater than 0 but got ${body.length}`);
-        assert(body.some((pet: any) => pet.status === 'available'))
-        assert(body.some((pet: any) => pet.status === 'pending'))
-        assert(!body.some((pet: any) => pet.status === 'sold'))
+        assert(body.some(pet => pet.status === 'available'))
+        assert(body.some(pet => pet.status === 'pending'))
+        assert(!body.some(pet => pet.status === 'sold'))
 
     })
 
     it('get pet by tag', async function () {
         let body = await pet.getPetByTag('tag1')
         assert(body.length > 0, `Expected pet count to be greater than 0 but got ${body.length}`)
-        assert(body.every((pet: any) => pet.tags.some((tag: any) =>  tag.name == 'tag1')))
+        assert(body.every(pet => pet.tags.some(tag =>  tag.name == 'tag1')))
     })
 
     it('can be added, updated and deleted', async function() {
-        const petToCreate = {
+        const petToCreate: Omit<definitions['Pet'], 'id'> = {
             "category": {
                 "id": 0,
                 "name": "string"
@@ -53,6 +54,7 @@ describe('User can', () => {
         }
 //Create pet
         const addedPet = await pet.addNewPet(petToCreate);
+        
         assert.deepEqual(addedPet, {
             ...addedPet,
             id: addedPet.id
@@ -63,7 +65,7 @@ describe('User can', () => {
             id: addedPet.id
         })
 //Update pet
-        const newerPet = {
+        const newerPet: definitions['Pet'] = {
             id: addedPet.id,
             category: {
                 id: 1,

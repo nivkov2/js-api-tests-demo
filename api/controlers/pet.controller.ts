@@ -1,12 +1,12 @@
 
 import { URLSearchParams } from "url";
-import {JsonRequest} from '../request'
-
+import { JsonRequest } from 'http-req-builder'
+import {definitions, operations} from '../../.temp/types'
 export class PetController{
     async getPetById(id: number | string){
         return (await new JsonRequest()
                 .url(`http://93.126.97.71:10080/api/pet/${id}`)
-                .send()
+                .send<operations['getPetById']['responses']['200']['schema']>()
         ).body
     }
 
@@ -14,7 +14,7 @@ export class PetController{
         return (await new JsonRequest()
                 .url(`http://93.126.97.71:10080/api/pet/findByStatus`)
                 .searchParams(new URLSearchParams({ status }))
-                .send()
+                .send<operations['findPetsByStatus']['responses']['200']['schema']>()
         ).body
     }
 
@@ -22,54 +22,25 @@ export class PetController{
         return (await new JsonRequest()
                 .url(`http://93.126.97.71:10080/api/pet/findByTags`)
                 .searchParams( new URLSearchParams({ tags }))
-                .send()
+                .send<operations['findPetsByTags']['responses']['200']['schema']>()
         ).body
     }
 
-    async addNewPet(pet: 
-        {
-            category: {
-                id: number,
-                name: string
-              },
-              name: string,
-              photoUrls: string[],
-              tags:
-                {
-                  id: number
-                  name: string
-                }[],
-              status: string
-    }){
+    async addNewPet(pet: Omit<definitions['Pet'], 'id'>){
         return (await new JsonRequest()
                 .url(`http://93.126.97.71:10080/api/pet`)
                 .method('POST')
                 .body(pet)
-                .send()
+                .send<operations['addPet']['responses']['200']['schema']>()
         ).body
     }
 
-    async updatePet(pet: 
-        {
-            id: number,
-            category: {
-                id: number,
-                name: string
-              },
-              name: string,
-              photoUrls: string[],
-              tags:
-                {
-                  id: number
-                  name: string
-                }[],
-              status: string
-    }){
+    async updatePet(pet:definitions['Pet']){
         return (await new JsonRequest()
                 .url(`http://93.126.97.71:10080/api/pet`)
                 .method('PUT')
                 .body(pet)
-                .send()
+                .send<operations['updatePet']['responses']['200']['schema']>()
         ).body
     }
 
@@ -77,7 +48,7 @@ export class PetController{
         return (await new JsonRequest()
                 .url(`http://93.126.97.71:10080/api/pet/${id}`)
                 .method('DELETE')
-                .send()
+                .send<definitions['AbstractApiResponse']>()
         ).body
     }
 

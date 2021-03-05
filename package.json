@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@apidevtools/swagger-parser": "^10.0.2",
     "@types/mocha": "8.2.0",
     "@types/node": "14.14.25",
     "ajv": "^7.1.1",

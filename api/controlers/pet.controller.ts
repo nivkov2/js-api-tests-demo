@@ -3,59 +3,15 @@ import { URLSearchParams } from "url";
 import { JsonRequest } from 'http-req-builder'
 //import { JsonRequest } from "../request";
 import {definitions, operations} from '../../.temp/types'
-import { validate } from "../validators/validator";
+import {  loadAPISpec, validate } from "../validators/validator";
 export class PetController{
     async getPetById(id: number | string){
         const body = (await new JsonRequest()
                 .url(`http://93.126.97.71:10080/api/pet/${id}`)
                 .send<operations['getPetById']['responses']['200']['schema']>()
         ).body
-        const schema = {
-            "$schema": "http://json-schema.org/draft-07/schema",
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "category": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "integer"
-                        },
-                        "name": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "photoUrls": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type": "integer"
-                            },
-                            "name": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        }
+        const apiSpec = await loadAPISpec()
+        const schema = apiSpec.paths['/pet/{petId}']['get']['responses']['200']['schema']
         validate(schema, body)
         return body
     }
